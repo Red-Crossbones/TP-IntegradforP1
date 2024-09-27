@@ -1,0 +1,5 @@
+CARGA archivo1.txt;
+AGREGA variable1,variable2,variable3;
+@ Esto es un comentario
+ENCABEZADO Esto es un encabezado
+SEPARA ,
