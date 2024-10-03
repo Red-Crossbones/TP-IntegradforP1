@@ -3,7 +3,7 @@ import re
 # Expresion regulares
 lexemas = {
     'nomVariables': r'\b[a-z][a-z0-9]{0,9}\b',
-    'nomArchivo': r'\b[a-z][a-z0-9]{0,9}.(txt|text|csv)\b',
+    'nomArchivo': r'\b[a-z][a-z0-9]{0,9}\.(txt|text|csv)\b',
     'separador': r'[,;|]',
     'numero': r'[0-9]+',
     'coma': r',',

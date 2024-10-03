@@ -3,57 +3,56 @@ import re
 # Expresiones regulares
 lexemas = {
     'nomVariables': r'\b[a-z][a-z0-9]{0,9}\b',
-    'nomArchivo': r'\b[a-z][a-z0-9]{0,9}.(txt|text|csv)\b',
+    'nomArchivo': r'\b[a-z][a-z0-9]{0,9}\.(txt|text|csv)\b',
     'separador': r'[,;|]',
     'numero': r'[0-9]+',
     'coma': r',',
     'palabrasReservadas': r'\b(CARGA|GUARDA|SEPARA|AGREGA|ENCABEZADO|TODO)\b',
-    'comentario': r'@\s*.*'
+    'comentario': r'@\s.*'
 }
 
 # Inicializar tokens
 tokens = []
 
 
-# Verificación usando expresiones regulares:
+# Funciones de verificación
 def regex_es_nombre_de_variable(palabra):
-    return re.match(lexemas['nomVariables'], palabra) is not None
+    return re.fullmatch(lexemas['nomVariables'], palabra) is not None
 
 
 def regex_es_nombre_de_archivo(palabra):
-    return re.match(lexemas['nomArchivo'], palabra) is not None
+    return re.fullmatch(lexemas['nomArchivo'], palabra) is not None
 
 
 def regex_es_numero(palabra):
-    return re.match(lexemas['numero'], palabra) is not None
+    return re.fullmatch(lexemas['numero'], palabra) is not None
 
 
 def regex_es_palabra_reservada(palabra):
-    return re.match(lexemas['palabrasReservadas'], palabra) is not None
+    return re.fullmatch(lexemas['palabrasReservadas'], palabra) is not None
 
 
 def regex_es_comentario(palabra):
-    return re.match(lexemas['comentario'], palabra) is not None
+    return re.fullmatch(lexemas['comentario'], palabra) is not None
 
 
 # Función para dividir la línea en palabras/separadores
 def dividir_linea(linea):
-    # Dividimos por espacios y separadores (, ; |) manteniéndolos en el resultado
-    return re.split(r'(\s+|[,;|])', linea)
+    return re.split(r'([,;|])|(\s+)', linea)
 
 
 # Función que analiza línea por línea
 def analiza_linea(archivo):
-    for linea in archivo:
+    for linea_num, linea in enumerate(archivo, start=1):
         palabras = dividir_linea(linea)  
 
         for palabra in palabras:
-            if palabra.strip() == "": 
+            if palabra is None or palabra.strip() == "":
                 continue
             # Comprobaciones de cada tipo de lexema
             if regex_es_comentario(palabra):
                 tokens.append(('comentario', palabra))
-                break  
+                break  # Ignorar el resto de la línea
             elif regex_es_palabra_reservada(palabra):
                 tokens.append(('palabrasReservadas', palabra))
             elif regex_es_nombre_de_variable(palabra):
@@ -62,10 +61,10 @@ def analiza_linea(archivo):
                 tokens.append(('nomArchivo', palabra))
             elif regex_es_numero(palabra):
                 tokens.append(('numero', palabra))
-            elif re.match(lexemas['separador'], palabra):
+            elif re.fullmatch(lexemas['separador'], palabra):
                 tokens.append(('separador', palabra))
             else:
-                print(f"Error léxico en la palabra: '{palabra}'")
+                print(f"Error léxico en la palabra: '{palabra}' en la línea {linea_num}")
                 tokens.append(('error', palabra))
 
 
