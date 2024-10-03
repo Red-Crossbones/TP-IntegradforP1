@@ -42,11 +42,11 @@ def dividir_linea(linea):
     return re.split(r'([,;|])|(\s+)', linea)
 
 
-# Función que analiza línea por línea
+# Función que analiza línea por línea, palabra a palabra
 def analiza_linea(archivo):
     for linea_num, linea in enumerate(archivo, start=1):
         palabras = dividir_linea(linea)  
-
+        cantPalabrasReservadas = 0
         for palabra in palabras:
             if palabra is None or palabra.strip() == "":
                 continue
@@ -56,6 +56,10 @@ def analiza_linea(archivo):
                     tokens[palabra] = 'comentario'
                 break  # Ignorar el resto de la línea
             elif regex_es_palabra_reservada(palabra):
+                cantPalabrasReservadas += 1
+                if cantPalabrasReservadas > 1:
+                    print("Error en la linea: " + str(linea_num) + ". Ya hay una palabra reservada en esa linea")
+                    break
                 if palabra not in tokens:
                     tokens[palabra] = 'palabrasReservadas'
             elif regex_es_nombre_de_variable(palabra):
