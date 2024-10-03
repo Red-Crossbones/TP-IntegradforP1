@@ -4,9 +4,10 @@ import re
 lexemas = {
     'nomVariables': r'\b[a-z][a-z0-9]{0,9}\b',
     'nomArchivo': r'\b[a-z][a-z0-9]{0,9}\.(txt|text|csv)\b',
-    'separador': r'[,;|]',
+    'separador': r'[,;]',
     'numero': r'[0-9]+',
     'coma': r',',
+    'fin': r'\n',
     'palabrasReservadas': r'\b(CARGA|GUARDA|SEPARA|AGREGA|ENCABEZADO|TODO)\b',
     'comentario': r'@\s*.*'
 }
@@ -72,18 +73,18 @@ def analiza_linea(archivo):
             else:
                 print(f"Error léxico en la palabra: '{palabra}' en la línea {linea_num}")
                 if palabra not in tokens:
-                    tokens[palabra] = 'error'
+                    tokens[palabra] = 'error' + ", linea: " + str(linea_num)
 
 
 # Función para abrir el archivo
 def abrir_archivo(ruta_de_archivo):
-    with open(ruta_de_archivo, 'r', encoding='UTF-8') as f:
-        analiza_linea(f)
+    return open(ruta_de_archivo, 'r', encoding='UTF-8')
 
 
 # Función que muestra los resultados de los tokens
 def muestra():
-    abrir_archivo('prueba.txt')
+    archivo = abrir_archivo("prueba.txt")
+    analiza_linea(archivo)
     for token in tokens:
         print(token + " --> " + tokens[token])
     print("FIN")
