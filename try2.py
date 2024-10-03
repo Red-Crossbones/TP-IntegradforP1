@@ -84,7 +84,7 @@ def abrir_archivo(ruta_de_archivo):
 def muestra():
     abrir_archivo('prueba.txt')
     for token in tokens:
-        print(token + " - " + tokens[token])
+        print(token + " --> " + tokens[token])
     print("FIN")
 
 
