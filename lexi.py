@@ -1,72 +1,111 @@
 import re
 
-# Expresiones regulares
+#Expresion regulares
 lexemas = {
     'nomVariables': r'\b[a-z][a-z0-9]{0,9}\b',
-    'nomArchivo': r'\b[a-z][a-z0-9]{0,9}\.txt\b',
+    'nomArchivo': r'\b[a-z][a-z0-9]{0,9}.txt\b',
     'separador': r'[,;|]',
     'numero': r'[0-9]+',
     'coma': r',',
-    'palabrasReservadas': r'\b(CARGA|GUARDA|SEPARA|AGREGA|ENCABEZADO|TODOS)\b',
+    'palabrasReservadas': r'\b(CARGA|GUARDA|SEPARA|AGREGA|ENCABEZADO|TODOS)\b',  
     'comentario': r'@\s*.*'
 }
 
-# Inicializar tokens
+#Inicializar tokens
 tokens = []
 
-# Verificación usando expresiones regulares:
+## Verificacion usando expresiones regulares:
+
 def regex_es_nombre_de_variable(palabra):
-    return re.match(lexemas['nomVariables'], palabra) is not None
+    res = re.match(lexemas['nomVariables'], palabra)
+    return res!=None
 
 def regex_es_nombre_de_archivo(palabra):
-    return re.match(lexemas['nomArchivo'], palabra) is not None
+    res = re.match(lexemas['nomArchivo'], palabra)
+    return res!=None
 
-# Función que elimina espacios en blanco prescindibles
+def regex_es_palabra_reservada(palabra):
+    res = re.match(lexemas['palabrasReservadas'], palabra)
+    return res!=None
+
+def regex_es_comentario(linea):
+  res = re.match(lexemas['comentario'], linea)
+  return res!=None
+
+#Codigo para que verifique si es un nombre de variable. Falta que cargue a la tabla
+def es_nom_variable(t):
+    ret = False
+    if len(t)<=10 and t[0].islower():
+        ret = es_nom_valido(t[1:])
+    
+    return ret
+
+# Metodo recursivo, usado solo adentro de es_nom_variable
+def es_nom_valido(t):
+    ret = False
+    if len(t)==0:
+        ret=True
+    else:
+        if t[0].islower() or t[0].isnumeric():
+            ret = es_nom_valido(t[1:])
+    return ret
+
+#Funcion que elimina espacios en blanco prescindibles
 def eliminar_espacio(linea):
-    return linea.strip()
+    linea = linea.strip()
+    return linea
 
-# Función para que verifique si una línea es comentario
+#Funcion para que verifique si una linea es comentario
 def es_comentario(linea):
-    if re.match(lexemas['comentario'], linea):
-        tokens.append(('comentario', linea))
-        return True
+    # comentario = r'@\s*.*'
+    if re.match(lexemas['comentario'],linea):
+        tokens.append('comentario',linea)
+        return tokens
     return False
 
-# Función para verificar si una línea es palabra reservada
+#Funcion para que veririfique si una linea es palabra reservada
 def es_palabra_reservada(linea):
     if re.match(lexemas['palabrasReservadas'], linea):
-        tokens.append(('palabrasReservadas', linea))
+        tokens.append('palabrasReservadas',linea)
         return True
     return False
 
-# Función que analiza línea por línea
+
+
+#Funcion que analiza linea por linea
 def analiza_linea(archivo):
-    for linea in archivo:
+    while True:
+        linea = archivo.readline()
+        if not linea:
+            break
         linea = eliminar_espacio(linea)
+        if not es_comentario(linea) and not es_palabra_reservada(linea):
+            tokens.append(linea)
+        if es_comentario(linea) or es_palabra_reservada(linea):
+            tokens.append(linea)
+        if es_nom_variable(linea):
+            tokens.append(linea)
+        if es_nom_valido(linea):
+            tokens.append(linea)
+        if regex_es_nombre_de_variable(linea):
+            tokens.append(linea)
+        if regex_es_nombre_de_archivo(linea):
+            tokens.append(linea)
+        if es_nom_valido(linea) and not es_nom_variable(linea):
+            tokens.append(linea)
+        if es_nom_valido(linea) and not es_nom_variable(linea) and not es_nom_variable(linea):
+            tokens.append(linea)
 
-        # Comprobaciones de cada tipo de lexema
-        if es_comentario(linea):
-            continue
-        elif es_palabra_reservada(linea):
-            continue
-        elif regex_es_nombre_de_variable(linea):
-            tokens.append(('nomVariables', linea))
-        elif regex_es_nombre_de_archivo(linea):
-            tokens.append(('nomArchivo', linea))
-        else:
-            print(f"Error léxico en la línea: {linea}")
-            tokens.append(('error', linea))
-
-# Función para abrir el archivo
+#Funcion para abrir archivo
 def abrir_archivo(ruta_de_archivo):
     with open(ruta_de_archivo, 'r', encoding='UTF-8') as f:
-        analiza_linea(f)
-
-# Función que muestra los resultados de los tokens
+        return f
+    
 def muestra():
-    abrir_archivo('prueba.txt')
-    for token in tokens:
-        print(token)
+    archivo = abrir_archivo("prueba.txt")
+    analiza_linea(archivo)
+    archivo.close()
+    print(tokens)
     print("FIN")
 
 #Nombres de archivos
