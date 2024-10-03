@@ -1,18 +1,36 @@
 import re
 
 #Expresion regulares
-# lexemas = {
-#     'nomVariables': r'[a-z][a-z0-9]{0,9}',            
-#     'nomArchivo': r'[a-z][a-z0-9]{0,9}.txt',
-#     'separador': r'[,;|]',
-#     'numero': r'[0-9]+',
-#     'coma': r',',
-#     'palabrasReservadas': r'\b(CARGA|GUARDA|SEPARA|AGREGA|ENCABEZADO|TODOS)\b',   // Implementado en metodo
-#     'comentario': r'@\s*.*'
-# }
+lexemas = {
+    'nomVariables': r'\b[a-z][a-z0-9]{0,9}\b',
+    'nomArchivo': r'\b[a-z][a-z0-9]{0,9}.txt\b',
+    'separador': r'[,;|]',
+    'numero': r'[0-9]+',
+    'coma': r',',
+    'palabrasReservadas': r'\b(CARGA|GUARDA|SEPARA|AGREGA|ENCABEZADO|TODOS)\b',  
+    'comentario': r'@\s*.*'
+}
 
 #Inicializar tokens
 tokens = []
+
+## Verificacion usando expresiones regulares:
+
+def regex_es_nombre_de_variable(palabra):
+    res = re.match(lexemas['nomVariables'], palabra)
+    return res!=None
+
+def regex_es_nombre_de_archivo(palabra):
+    res = re.match(lexemas['nomArchivo'], palabra)
+    return res!=None
+
+def regex_es_palabra_reservada(palabra):
+    res = re.match(lexemas['palabrasReservadas'], palabra)
+    return res!=None
+
+def regex_es_comentario(linea):
+  res = re.match(lexemas['comentario'], linea)
+  return res!=None
 
 #Codigo para que verifique si es un nombre de variable. Falta que cargue a la tabla
 def es_nom_variable(t):
@@ -39,59 +57,57 @@ def eliminar_espacio(linea):
 
 #Funcion para que verifique si una linea es comentario
 def es_comentario(linea):
-    comentario = r'@\s*.*'
-    if re.match(comentario,linea):
+    # comentario = r'@\s*.*'
+    if re.match(lexemas['comentario'],linea):
         tokens.append('comentario',linea)
         return tokens
     return False
 
+#Funcion para que veririfique si una linea es palabra reservada
+def es_palabra_reservada(linea):
+    if re.match(lexemas['palabrasReservadas'], linea):
+        tokens.append('palabrasReservadas',linea)
+        return True
+    return False
 
 
-
-
-## FALTA AÑADIR EL AGREGADO A LA TABLA
 
 #Funcion que analiza linea por linea
-def analiza_linea(f):
+def analiza_linea(archivo):
     while True:
-        linea = f.readline()
+        linea = archivo.readline()
         if not linea:
             break
         linea = eliminar_espacio(linea)
-        if not linea:
-            continue
-        if not es_nom_variable(linea):
-            continue
-        if es_comentario(linea):
-            continue
-        if not es_palabra_reservada(linea):
-            tokens.append('nomVariables',linea)
-        else:
-            tokens.append('palabrasReservadas',linea)
-    print(tokens)
-    print("FIN")
-    
- 
-#Funcion que maneja errores
-def maneja_error(t):
-    print("Error lexico")
-    print(t)
-    
-#Funcion que verifique si una linea es palabra reservada
-def es_palabra_reservada(t):
-    ret = False
-    if t in ["CARGA", "GUARDA", "SEPARA", "AGREGA", "ENCABEZADO", "TODO"]:
-        ret = True
-    return ret
+        if not es_comentario(linea) and not es_palabra_reservada(linea):
+            tokens.append(linea)
+        if es_comentario(linea) or es_palabra_reservada(linea):
+            tokens.append(linea)
+        if es_nom_variable(linea):
+            tokens.append(linea)
+        if es_nom_valido(linea):
+            tokens.append(linea)
+        if regex_es_nombre_de_variable(linea):
+            tokens.append(linea)
+        if regex_es_nombre_de_archivo(linea):
+            tokens.append(linea)
+        if es_nom_valido(linea) and not es_nom_variable(linea):
+            tokens.append(linea)
+        if es_nom_valido(linea) and not es_nom_variable(linea) and not es_nom_variable(linea):
+            tokens.append(linea)
 
 #Funcion para abrir archivo
-def abrir_archivo():
-    with open('prueba.txt', 'r', encoding='UTF-8') as f:
+def abrir_archivo(ruta_de_archivo):
+    with open(ruta_de_archivo, 'r', encoding='UTF-8') as f:
         return f
     
-    
-    
-    
+def muestra():
+    archivo = abrir_archivo("prueba.txt")
+    analiza_linea(archivo)
+    archivo.close()
+    print(tokens)
+    print("FIN")
+
 #Nombres de archivos
 def esVarArc(t, tabla, p):
     resp = False
@@ -116,7 +132,7 @@ def esVarArc(t, tabla, p):
         resp = esArc(t[1:], tabla, p)
     else:
         if p not in tabla:
-            tabla[p] = 'nomVariable'
+            tabla[p] = ''
         resp = True
     return resp
 
@@ -144,6 +160,30 @@ def esArc(t, tabla, p):
         resp = True
     return resp
 
+def esNumArc(t, tabla, p):
+    resp = False
+    if len(t) == 0:
+        if p not in tabla and '.' in p:
+            tabla[p] = 'nomArch'
+    elif t[0] == ' ':
+        if p not in tabla and '.' in p:
+            tabla[p] = 'nomArch'
+        resp = lexi(t[1:], tabla)
+    elif t[0] in SEPARADORES:
+        if p not in tabla and '.' in p:
+            tabla[p] = 'nomArch'
+        if t[0] not in tabla:
+            tabla[t[0]] = 'separador'
+        resp = lexi(t[1:], tabla)
+    elif t[0] not in NOVALIDOS:
+        p += t[0]
+        resp = esNumArc(t[1:], tabla, p)
+    else:
+        if p not in tabla and '.' in p:
+            tabla[p] = 'nomArch'
+        resp = True
+    return resp
+
 def lexi(texto, tabla):
     resp = False
     if len(texto) > 0:
@@ -158,12 +198,9 @@ def lexi(texto, tabla):
             resp = lexi(texto[1:], tabla)
         elif texto[0] == ' ':
             resp = lexi(texto[1:], tabla)
-        elif texto[0] == '@':
-            resp = False
         else:
             resp = True
     return resp
-
 
 def muestra(t, error):
     if error:
@@ -173,7 +210,10 @@ def muestra(t, error):
         print(t[lin], lin)
 
 
-# Ppal
+###############################################################################
+################                    MAIN                  #####################
+###############################################################################
+
 NOVALIDOS = '\/:*?"<>|'
 SEPARADORES = ',;'
 entrada = open('prueba.txt', 'r', encoding='UTF-8')
@@ -186,7 +226,9 @@ tablaSimbolos = {}
 
 while not error and i < len(lineas):
     lin = lineas[i]
-    error = lexi(lin.strip('\n'), tablaSimbolos)
     i += 1
+    if lin[0] == '@':
+        continue
+    error = lexi(lin.strip('\n'), tablaSimbolos)
 
 muestra(tablaSimbolos, error)
