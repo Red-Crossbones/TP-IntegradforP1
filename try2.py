@@ -3,11 +3,12 @@ import re
 # Expresiones regulares
 lexemas = {
     'nomVariables': r'\b[a-z][a-z0-9]{0,9}\b',
-    'nomArchivo': r'\b[a-z][a-z0-9]{0,9}\.(txt|text|csv)\b',
+    'nomArchivo': r'\b[a-z][a-z0-9]{0,9}.(txt|text|csv)\b',
     'separador': r'[,;|]',
-    'numero': r'\b[0-9]+\b',
+    'numero': r'[0-9]+',
+    'coma': r',',
     'palabrasReservadas': r'\b(CARGA|GUARDA|SEPARA|AGREGA|ENCABEZADO|TODO)\b',
-    'comentario': r'@\s*.*' 
+    'comentario': r'@\s*.*'
 }
 
 # Inicializar tokens
