@@ -74,6 +74,7 @@ def analiza_linea(archivo):
                 if palabra not in tokens:
                     tokens[palabra] = 'error'
 
+
 # Función para abrir el archivo
 def abrir_archivo(ruta_de_archivo):
     with open(ruta_de_archivo, 'r', encoding='UTF-8') as f:
