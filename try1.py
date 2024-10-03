@@ -1,40 +1,46 @@
 import re
 
-#Expresion regulares
+# Expresion regulares
 lexemas = {
     'nomVariables': r'\b[a-z][a-z0-9]{0,9}\b',
     'nomArchivo': r'\b[a-z][a-z0-9]{0,9}.(txt|text|csv)\b',
     'separador': r'[,;|]',
     'numero': r'[0-9]+',
     'coma': r',',
-    'palabrasReservadas': r'\b(CARGA|GUARDA|SEPARA|AGREGA|ENCABEZADO|TODO)\b',  
+    'palabrasReservadas': r'\b(CARGA|GUARDA|SEPARA|AGREGA|ENCABEZADO|TODO)\b',
     'comentario': r'@\s*.*'
 }
 
-#Inicializar tokens
+# Inicializar tokens
 tokens = []
 
-## Verificacion usando expresiones regulares:
+# # Verificacion usando expresiones regulares:
+
 
 def regex_es_nombre_de_variable(palabra):
     res = re.match(lexemas['nomVariables'], palabra)
-    return res!=None
+    return res != None
+
 
 def regex_es_nombre_de_archivo(palabra):
     res = re.match(lexemas['nomArchivo'], palabra)
-    return res!=None
+    return res != None
+
 
 def regex_es_numero(palabra):
-  res = re.match(lexemas['numero'],palabra)
-  return res!=None
+  res = re.match(lexemas['numero'], palabra)
+  return res != None
+
 
 def regex_es_palabra_reservada(palabra):
     res = re.match(lexemas['palabrasReservadas'], palabra)
-    return res!=None
+    return res != None
+
 
 def regex_es_comentario(linea):
   res = re.match(lexemas['comentario'], linea)
-  return res!=None
+  return res != None
+
 
 # Función para dividir la línea en palabras/separadores
 def dividir_linea(linea):
@@ -70,16 +76,18 @@ def analiza_linea(archivo):
 
 # Función para abrir el archivo
 def abrir_archivo(ruta_de_archivo):
-    with open(ruta_de_archivo, 'r', encoding='UTF-8') as f:
-        analiza_linea(f)
+    return open(ruta_de_archivo, 'r', encoding='UTF-8')
 
 
 # Función que muestra los resultados de los tokens
 def muestra():
-    abrir_archivo('prueba.txt')
+    archivo = abrir_archivo('prueba.txt')
+    analiza_linea(archivo)
     for token in tokens:
         print(token)
+    archivo.close()
     print("FIN")
+
 
 # Ejecución principal
 if __name__ == "__main__":
