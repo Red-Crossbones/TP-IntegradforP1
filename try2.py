@@ -33,7 +33,7 @@ def regex_es_palabra_reservada(palabra):
 
 
 def regex_es_comentario(palabra):
-    return re.match(lexemas['comentario'], palabra) is not None
+    return re.fullmatch(lexemas['comentario'], palabra) is not None
 
 
 # Función para dividir la línea en palabras/separadores
