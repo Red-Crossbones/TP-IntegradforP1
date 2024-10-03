@@ -12,7 +12,7 @@ lexemas = {
 }
 
 # Inicializar tokens
-tokens = []
+tokens = {}
 
 
 # Funciones de verificación
@@ -51,22 +51,28 @@ def analiza_linea(archivo):
                 continue
             # Comprobaciones de cada tipo de lexema
             if regex_es_comentario(palabra):
-                tokens.append(('comentario', palabra))
+                if palabra not in tokens:
+                    tokens[palabra] = 'comentario'
                 break  # Ignorar el resto de la línea
             elif regex_es_palabra_reservada(palabra):
-                tokens.append(('palabrasReservadas', palabra))
+                if palabra not in tokens:
+                    tokens[palabra] = 'palabrasReservadas'
             elif regex_es_nombre_de_variable(palabra):
-                tokens.append(('nomVariables', palabra))
+                if palabra not in tokens:
+                    tokens[palabra] = 'nomVariables'
             elif regex_es_nombre_de_archivo(palabra):
-                tokens.append(('nomArchivo', palabra))
+                if palabra not in tokens:
+                    tokens[palabra] = 'nomArchivo'
             elif regex_es_numero(palabra):
-                tokens.append(('numero', palabra))
+                if palabra not in tokens:
+                    tokens[palabra] = 'numero'
             elif re.fullmatch(lexemas['separador'], palabra):
-                tokens.append(('separador', palabra))
+                if palabra not in tokens:
+                    tokens[palabra] = 'separador'
             else:
                 print(f"Error léxico en la palabra: '{palabra}' en la línea {linea_num}")
-                tokens.append(('error', palabra))
-
+                if palabra not in tokens:
+                    tokens[palabra] = 'error'
 
 # Función para abrir el archivo
 def abrir_archivo(ruta_de_archivo):
@@ -78,7 +84,7 @@ def abrir_archivo(ruta_de_archivo):
 def muestra():
     abrir_archivo('prueba.txt')
     for token in tokens:
-        print(token)
+        print(token + " - " + tokens[token])
     print("FIN")
 
 
