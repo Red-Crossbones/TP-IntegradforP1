@@ -1,5 +1,7 @@
-CARGA archivo1.txt;
-AGREGA variable1,variable2,variable3; AGREGA otracosa;
+CARGA archivo1.txt,variable1
+AGREGA variable1,variable2
 @ Esto es un comentario
 ENCABEZADO Esto es un encabezado
-SEPARA ,
+SEPARA , ENCABEZADO AGREGA
+variable1
+Erroraso
