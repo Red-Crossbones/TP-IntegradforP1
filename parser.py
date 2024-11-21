@@ -68,10 +68,7 @@ def verificar_sintaxis(tokens):
                     else:
                         mensaje_error = "Sintaxis incorrecta para TODO."
                 else:
-                    mensaje_error = [
-                        f"Error en línea {linea}: {', '.join(mensajes)}. Tokens: {linea_tokens}"
-                        for linea, mensajes in errores_por_linea.items()
-                        ]
+                    mensaje_error = "Comando desconocido."
                 
                 # Agrega el mensaje de error al diccionario si existe
                 if mensaje_error:
@@ -296,21 +293,6 @@ class ParserErrorException(Exception):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
-
-
-def validar_tokens_serie(tokens, serie_esperada):
-    """
-    Valida una serie de tokens esperados en orden.
-    :param tokens: Lista de tokens.
-    :param serie_esperada: Lista de tipos de tokens esperados.
-    :return: True si todos los tokens coinciden, False de lo contrario.
-    """
-    if len(tokens) < len(serie_esperada):
-        return False
-    for i, tipo in enumerate(serie_esperada):
-        if tokens[i][1] != tipo:
-            return False
-    return True
 
 
 # Llamada principal para ejecutar el parser
