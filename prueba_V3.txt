@@ -1,0 +1,5 @@
+CARGA datos.csv, alumnos, ;
+ENCABEZADO alumnos
+SEPARA alumnos, edades, edad
+AGREGA alumnos, nuevas_edades
+GUARDA alumnos_guardados.csv, alumnos, ;

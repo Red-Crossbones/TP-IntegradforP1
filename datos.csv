@@ -1,6 +1,6 @@
-nombre;dni;uni;nivel
-Juan;1;comahue;grado
-María;2;UNRN;grado
-Carlos;3;UNRN;posgrado
-Ana;4;UNRN;maestria
-Luis;5;comahue;posgrado
+nombre;dni;uni;nivel;edad
+Juan;1;comahue;grado;13
+María;2;UNRN;grado;33
+Carlos;3;UNRN;posgrado;15
+Ana;4;UNRN;maestria;45
+Luis;5;comahue;posgrado;99
