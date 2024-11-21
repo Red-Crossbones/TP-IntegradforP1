@@ -1,0 +1,19 @@
+@ Cargo los datos
+CARGA datos.csv , alumnos , ,
+CARGA otrosdatos.csv , detalles, ,
+@ Creo una tabla base nueva, 'nuevatabla', donde formateare una mezcla de cosas entre archivos .csv
+SEPARA alumnos , nuevatabla , nombre 
+SEPARA detalles , dni , dni
+SEPARA detalles , nivel , nivel
+SEPARA detalles , uni , uni
+SEPARA alumnos, age, edad
+@ Verifico si puedo inicializar una nuevatabla aca
+AGREGA nuevatabla , dni
+AGREGA nuevatabla , uni
+AGREGA nuevatabla , nivel
+@ Cargo los datos
+ENCABEZADO nuevatabla
+@ Cargo los datos
+TODO nuevatabla , 2
+@ Cargo los datos
+GUARDA datoscombinados.csv , nuevatabla , ;

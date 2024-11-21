@@ -1,0 +1,12 @@
+@ Cargo los datos ; El separador es el error. Esta descripto como coma
+CARGA datos.csv , alumnos , '
+@ Los separo
+SEPARA alumnos , edades , edad
+@ agrego edades
+AGREGA alumnos , edades
+@ Cargo los datos
+ENCABEZADO alumnos
+@ Cargo los datos
+TODO alumnos , 2
+@ Cargo los datos, falla aca en la palabra guardar
+GUARDA alumnosguardados2.csv , alumnos , ;
