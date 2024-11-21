@@ -1,6 +1,6 @@
-nombre,edad,ciudad
-Juan,25,Madrid
-María,30,Barcelona
-Carlos,28,Sevilla
-Ana,22,Valencia
-Luis,35,Bilbao
+nombre;dni;uni;nivel
+Juan;1;comahue;grado
+María;2;UNRN;grado
+Carlos;3;UNRN;posgrado
+Ana;4;UNRN;maestria
+Luis;5;comahue;posgrado

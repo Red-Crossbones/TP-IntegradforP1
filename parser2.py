@@ -93,6 +93,7 @@ class InterpreteBari24:
         print("Encabezados:", ', '.join(headers))
 
     def todo(self, nom_variable, cant_lineas):
+
         """Muestra el contenido de una tabla por páginas."""
         if nom_variable not in self.tablas:
             raise ValueError(f"La tabla {nom_variable} no existe.")
@@ -106,6 +107,7 @@ class InterpreteBari24:
             print(f"Página {i // cant_lineas + 1}")
             for row in rows[i:i + cant_lineas]:
                 print(', '.join(row))
+            # Siempre permitir presionar Enter para continuar, incluso si no hay más páginas
             input("Presione Enter para continuar...")
 
     def procesar_instruccion(self, instruccion):
@@ -138,5 +140,5 @@ class InterpreteBari24:
         with open(nombre_archivo, 'r') as archivo:
             for linea in archivo:
                 linea = linea.strip()
-                if linea:  # Ignorar líneas vacías
+                if linea and not linea.startswith('@'):  # Ignorar líneas que comienzan con '@'
                     self.procesar_instruccion(linea)

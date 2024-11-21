@@ -1,4 +1,5 @@
+@Esto es un comentario
 CARGA datos.csv, tabla1
 ENCABEZADO tabla1
 TODO tabla1, 5
-GUARDA datoscominados.csv, tabla1
+GUARDA datoscombinados.csv, tabla1
