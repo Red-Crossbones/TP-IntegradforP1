@@ -112,20 +112,20 @@ class InterpreteBari24:
 
         return headers
 
-    def todo(self, tabla, valor):
-        """Aplica una operación en toda la tabla (multiplicación numérica)."""
+    def todo(self, tabla, num_lineas):
+        """Muestra las primeras 'num_lineas' de una tabla."""
         if tabla not in self.tablas:
             raise ValueError(f"La tabla {tabla} no existe.")
         
         table = self.tablas[tabla]
         rows = table['rows']
 
-        for row in rows:
-            for idx, cell in enumerate(row):
-                try:
-                    row[idx] = str(float(cell) * valor)
-                except ValueError:
-                    continue  # Ignorar celdas no numéricas
+        # Mostrar las líneas de la tabla en bloques de num_lineas
+        for i in range(0, len(rows), num_lineas):
+            print(f"Mostrando líneas {i + 1} a {min(i + num_lineas, len(rows))}:")
+            for row in rows[i:i + num_lineas]:
+                print(', '.join(row))
+            print('-' * 50)
 
     def procesar_instruccion(self, instruccion):
         """Procesa una instrucción del lenguaje Bari24."""
@@ -197,6 +197,4 @@ class InterpreteBari24:
             try:
                 self.procesar_instruccion(instruccion)
             except ValueError as e:
-                print(f"Error al procesar la instrucción: {e}")
-
-        print(f"Procesamiento del archivo '{archivo}' completado.")
+                print(f"Error al procesar la instrucción '{instruccion}': {e}")
