@@ -1,5 +1,6 @@
 import os
 import csv
+import re
 
 
 class InterpreteBari24:
@@ -177,3 +178,24 @@ class InterpreteBari24:
                 print(f"Comando desconocido: {comando}")
 
         self.procesar_instrucciones(instrucciones)
+
+    def analizar_entrada(self, entrada):
+        """Método para analizar una entrada y dividirla en tokens."""
+        # Definimos patrones para los diferentes tipos de tokens
+        patrones = {
+            'COMANDO': r'(CARGA|GUARDA|SEPARA|AGREGA|ENCABEZADO|TODO)',
+            'IDENTIFICADOR': r'[a-zA-Z_][a-zA-Z0-9_]*',
+            'ENTERO': r'\d+',
+            'COMA': r',',
+            'ESPACIO': r'\s+',
+        }
+
+        # Unir todos los patrones y crear una expresión regular general
+        regex = '|'.join(f'(?P<{key}>{pattern})' for key, pattern in patrones.items())
+        tokens = []
+        for match in re.finditer(regex, entrada):
+            tipo = match.lastgroup
+            valor = match.group(tipo)
+            if tipo != 'ESPACIO':  # Ignorar los espacios
+                tokens.append((tipo, valor))
+        return tokens
