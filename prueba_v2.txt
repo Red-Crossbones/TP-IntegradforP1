@@ -1,19 +1,19 @@
 @ Cargo los datos
-CARGA datos.csv , alumnos , ,
+CARGA datos.csv , alumnos , ;
 CARGA otrosdatos.csv , detalles, ,
 @ Creo una tabla base nueva, 'nuevatabla', donde formateare una mezcla de cosas entre archivos .csv
-SEPARA alumnos , nuevatabla , nombre 
+SEPARA alumnos , nuevatablaaaaaa , nombre 
 SEPARA detalles , dni , dni
 SEPARA detalles , nivel , nivel
 SEPARA detalles , uni , uni
 SEPARA alumnos, age, edad
-@ Verifico si puedo inicializar una nuevatabla aca
-AGREGA nuevatabla , dni
-AGREGA nuevatabla , uni
-AGREGA nuevatabla , nivel
+@ Verifico si puedo inicializar una nuevatabl aca
+AGREGA nuevatabl , dni
+AGREGA nuevatabl , uni
+AGREGA nuevatabl , nivel
 @ Cargo los datos
-ENCABEZADO nuevatabla
+ENCABEZADO nuevatabl
 @ Cargo los datos
-TODO nuevatabla , 2
+TODO nuevatabl , 2
 @ Cargo los datos
-GUARDA datoscombinados.csv , nuevatabla , ;
+GUARDA datoscombinados.csv , nuevatabl , ;
