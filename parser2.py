@@ -111,6 +111,7 @@ class InterpreteBari24:
                     row[idx] = str(int(cell) * valor)
 
     def procesar_instruccion(self, instruccion):
+
         """Procesa una instrucción del lenguaje Bari24."""
         partes = instruccion.strip().split()
         comando = partes[0]
@@ -119,22 +120,54 @@ class InterpreteBari24:
         # Asegurarse de que no haya parámetros vacíos innecesarios
         args = [arg.strip() for arg in args if arg.strip() != '']
 
-        if comando == "CARGA":
-            self.cargar(args[0], args[1] if len(args) > 1 else None, args[2] if len(args) > 2 else ',')
-        elif comando == "GUARDA":
-            self.guarda(args[0], args[1] if len(args) > 1 else None, args[2] if len(args) > 2 else ',')
-        elif comando == "SEPARA":
-            columna = int(args[2]) if args[2].strip().isdigit() else args[2].strip()
-            self.separa(args[0], args[1], columna)
-        elif comando == "AGREGA":
-            self.agrega(args[0], args[1])
-        elif comando == "ENCABEZADO":
-            self.encabezado(args[0])
-        elif comando == "TODO":
-            self.todo(args[0], int(args[1]))
-        else:
-            raise ValueError(f"Comando desconocido: {comando}")
-    
+        try:
+            if comando == "CARGA":
+                self.cargar(args[0], args[1] if len(args) > 1 else None, args[2] if len(args) > 2 else ',')
+                print(f"Tabla '{args[1]}' cargada con éxito. Estado actual:")
+                self.imprimir_tabla(args[1])
+            elif comando == "GUARDA":
+                self.guarda(args[0], args[1] if len(args) > 1 else None, args[2] if len(args) > 2 else ',')
+                print(f"Tabla '{args[1]}' guardada en '{args[0]}'.")
+            elif comando == "SEPARA":
+                columna = int(args[2]) if args[2].strip().isdigit() else args[2].strip()
+                self.separa(args[0], args[1], columna)
+                print(f"Columna '{args[2]}' separada en nueva columna '{args[1]}'. Estado actual de la tabla '{args[0]}':")
+                self.imprimir_tabla(args[0])
+            elif comando == "AGREGA":
+                self.agrega(args[0], args[1])
+                print(f"Columna '{args[1]}' agregada a la tabla '{args[0]}'. Estado actual:")
+                self.imprimir_tabla(args[0])
+            elif comando == "ENCABEZADO":
+                headers = self.encabezado(args[0])
+                print(f"Encabezados de la tabla '{args[0]}': {headers}")
+            elif comando == "TODO":
+                self.todo(args[0], int(args[1]))
+                print(f"Operación TODO aplicada a la tabla '{args[0]}'. Estado actual:")
+                self.imprimir_tabla(args[0])
+            else:
+                raise ValueError(f"Comando desconocido: {comando}")
+        except Exception as e:
+            print(f"Error al procesar la instrucción '{instruccion}': {e}")
+
+    def imprimir_tabla(self, tabla):
+        """Imprime el contenido de una tabla."""
+        if tabla not in self.tablas:
+            print(f"La tabla '{tabla}' no existe.")
+            return
+
+        table = self.tablas[tabla]
+        headers = table['headers']
+        rows = table['rows']
+
+        # Imprimir encabezados
+        print(', '.join(headers))
+        print('-' * 50)
+
+        # Imprimir filas
+        for row in rows:
+            print(', '.join(row))
+        print('-' * 50)
+
     def ejecutar_archivo(self, archivo):
 
         """Ejecuta las instrucciones de un archivo Bari24."""
