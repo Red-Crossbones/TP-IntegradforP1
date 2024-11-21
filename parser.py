@@ -4,6 +4,7 @@ from lexi import abrir_archivo
 
 sentencias = []
 
+
 # Modificación en verificar_sintaxis para usar la nueva función
 def verificar_sintaxis(tokens):
     instrucciones = []
@@ -20,18 +21,18 @@ def verificar_sintaxis(tokens):
                 mensaje_error = None
                 if tipo == 'GUARDA':  # Unificamos CARGA y GUARDA
                     if validar_guarda(linea_tokens):
-                        for index, item in enumerate(linea_tokens[1:],start=1):
+                        for index, item in enumerate(linea_tokens[1:], start=1):
                             if item[0] != "," or (index == len(linea_tokens[1:]) and item[1] == "separador"):
                                 argumentos.append(item[0])    
-                        instrucciones.append((ejecutar_guarda,argumentos))
+                        instrucciones.append((ejecutar_guarda, argumentos))
                     else:
                         mensaje_error = "Sintaxis incorrecta para GUARDA."
                 elif tipo == 'CARGA':
                     if validar_carga(linea_tokens):
-                        for index, item in enumerate(linea_tokens[1:],start=1):
+                        for index, item in enumerate(linea_tokens[1:], start=1):
                             if item[0] != "," or (index == len(linea_tokens[1:]) and item[1] == "separador"):
                                 argumentos.append(item[0])                                
-                        instrucciones.append((ejecutar_carga,argumentos))
+                        instrucciones.append((ejecutar_carga, argumentos))
                     else:
                         mensaje_error = "Sintaxis incorrecta para CARGA."
                 elif tipo == 'SEPARA':
@@ -39,7 +40,7 @@ def verificar_sintaxis(tokens):
                         for index, item in enumerate(linea_tokens[1:]):
                             if item[0] != ",":
                                 argumentos.append(item[0])    
-                        instrucciones.append((ejecutar_separa,argumentos))
+                        instrucciones.append((ejecutar_separa, argumentos))
                     else:
                         mensaje_error = "Sintaxis incorrecta para SEPARA."
                 elif tipo == 'AGREGA':
@@ -47,7 +48,7 @@ def verificar_sintaxis(tokens):
                         for index, item in enumerate(linea_tokens[1:]):
                             if item[0] != ",":
                                 argumentos.append(item[0])    
-                        instrucciones.append((ejecutar_agrega,argumentos))
+                        instrucciones.append((ejecutar_agrega, argumentos))
                     else:
                         mensaje_error = "Sintaxis incorrecta para AGREGA."
                 elif tipo == 'ENCABEZADO':
@@ -55,7 +56,7 @@ def verificar_sintaxis(tokens):
                         for index, item in enumerate(linea_tokens[1:]):
                             if item[0] != ",":
                                 argumentos.append(item[0])    
-                        instrucciones.append((ejecutar_encabezado,argumentos))
+                        instrucciones.append((ejecutar_encabezado, argumentos))
                     else:
                         mensaje_error = "Sintaxis incorrecta para ENCABEZADO."
                 elif tipo == 'TODO':
@@ -63,11 +64,14 @@ def verificar_sintaxis(tokens):
                         for index, item in enumerate(linea_tokens[1:]):
                             if item[0] != ",":
                                 argumentos.append(item[0])
-                        instrucciones.append((ejecutar_todo,argumentos))
+                        instrucciones.append((ejecutar_todo, argumentos))
                     else:
                         mensaje_error = "Sintaxis incorrecta para TODO."
                 else:
-                    mensaje_error = "Comando desconocido."
+                    mensaje_error = [
+                        f"Error en línea {linea}: {', '.join(mensajes)}. Tokens: {linea_tokens}"
+                        for linea, mensajes in errores_por_linea.items()
+                        ]
                 
                 # Agrega el mensaje de error al diccionario si existe
                 if mensaje_error:
@@ -103,6 +107,7 @@ def validar_guarda(tokens):
         return True
     return False
 
+
 # Función genérica de validación para CARGA y GUARDA
 def validar_carga(tokens):
     # CARGA <nomArchivo> , <nomVariable>[ , <separador>]
@@ -113,6 +118,7 @@ def validar_carga(tokens):
         (len(tokens) == 4 or (len(tokens) == 6 and obtener_token(tokens, 'separador', 4)))):
         return True
     return False
+
 
 # Funciones específicas de validación
 def validar_separa(tokens):
@@ -157,6 +163,7 @@ def validar_todo(tokens):
         return True
     return False
 
+
 # Función para cargar un archivo como tabla
 def ejecutar_carga(tablas, nom_arch, nom_variable, separador=','):
     try:
@@ -172,6 +179,7 @@ def ejecutar_carga(tablas, nom_arch, nom_variable, separador=','):
         print(f"Error al cargar archivo '{nom_arch}': {e}")
         return tablas
 
+
 # Función para guardar una tabla en un archivo
 def ejecutar_guarda(tablas, nom_arch, nom_variable, separador=','):
     if nom_variable not in tablas:
@@ -186,6 +194,7 @@ def ejecutar_guarda(tablas, nom_arch, nom_variable, separador=','):
     except Exception as e:
         print(f"Error al guardar archivo '{nom_arch}': {e}")
         return tablas
+
 
 # Función para separar una columna como nueva tabla
 def ejecutar_separa(tablas, nom_variable1, nom_variable2, columna):
@@ -205,6 +214,7 @@ def ejecutar_separa(tablas, nom_variable1, nom_variable2, columna):
     except Exception as e:
         print(f"Error al separar columna '{columna}': {e}")
         return tablas
+
 
 # Función para agregar una columna de una tabla a otra
 def ejecutar_agrega(tablas, nom_variable1, nom_variable2):
@@ -228,6 +238,7 @@ def ejecutar_agrega(tablas, nom_variable1, nom_variable2):
         print(f"Error al agregar columna: {e}")
         return tablas
 
+
 # Función para mostrar encabezados de una tabla
 def ejecutar_encabezado(tablas, nom_variable):
     if nom_variable not in tablas:
@@ -240,6 +251,7 @@ def ejecutar_encabezado(tablas, nom_variable):
     except Exception as e:
         print(f"Error al mostrar encabezados: {e}")
         return tablas
+
 
 # Función para mostrar contenido paginado de una tabla
 def ejecutar_todo(tablas, nom_variable, cant_lineas):
@@ -260,28 +272,45 @@ def ejecutar_todo(tablas, nom_variable, cant_lineas):
     except Exception as e:
         print(f"Error al mostrar la tabla: {e}")
         return tablas
+
         
 class LexiErrorException(Exception):
-    """Exception raised for custom error scenarios.
+    """Excepción planteada para escenarios de error personalizados.
 
-    Attributes:
-        message -- explanation of the error
+    Atributos:
+        mensaje -- explicación del error
     """
 
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
+
 
 class ParserErrorException(Exception):
-    """Exception raised for custom error scenarios.
+    """Excepción planteada para escenarios de error personalizados.
 
-    Attributes:
-        message -- explanation of the error
+    Atributos:
+        mensaje -- explicación del error
     """
 
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
+
+
+def validar_tokens_serie(tokens, serie_esperada):
+    """
+    Valida una serie de tokens esperados en orden.
+    :param tokens: Lista de tokens.
+    :param serie_esperada: Lista de tipos de tokens esperados.
+    :return: True si todos los tokens coinciden, False de lo contrario.
+    """
+    if len(tokens) < len(serie_esperada):
+        return False
+    for i, tipo in enumerate(serie_esperada):
+        if tokens[i][1] != tipo:
+            return False
+    return True
 
 
 # Llamada principal para ejecutar el parser
@@ -306,7 +335,7 @@ if __name__ == "__main__":
         
         tablas = {}
         for instruccion, argumentos in instrucciones:
-            tablas = instruccion(tablas,*argumentos)
+            tablas = instruccion(tablas, *argumentos)
     
     except FileNotFoundError:
         print("Error: El archivo no se encontró. Verifique la ruta y el nombre del archivo.")
