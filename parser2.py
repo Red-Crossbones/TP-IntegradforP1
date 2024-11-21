@@ -3,6 +3,20 @@ import csv
 import re
 
 
+class LexiErrorException(Exception):
+    """Excepción personalizada para errores léxicos."""
+
+    def __init__(self, message):
+        super().__init__(message)
+
+
+class ParserErrorException(Exception):
+    """Excepción personalizada para errores sintácticos."""
+
+    def __init__(self, message):
+        super().__init__(message)
+
+
 class InterpreteBari24:
 
     def __init__(self):
@@ -107,12 +121,13 @@ class InterpreteBari24:
         return tablas
 
     def todo(self, tablas, tabla, num_lineas):
-        """Muestra las primeras 'num_lineas' de una tabla."""
+        """Muestra las primeras 'num_lineas' de una tabla con paginación."""
         if tabla not in tablas:
             raise ValueError(f"La tabla {tabla} no existe.")
         
         table = tablas[tabla]
         rows = table['rows']
+        num_lineas = int(num_lineas)
 
         for i in range(0, len(rows), num_lineas):
             print(f"Mostrando líneas {i + 1} a {min(i + num_lineas, len(rows))}:")
@@ -199,3 +214,19 @@ class InterpreteBari24:
             if tipo != 'ESPACIO':  # Ignorar los espacios
                 tokens.append((tipo, valor))
         return tokens
+
+    # Nuevas funciones para carga, guarda, y paginación de datos:
+    def validar_guarda(self, tokens):
+        """Valida la sintaxis de la instrucción 'GUARDA'."""
+        if (self.obtener_token(tokens, 'palabrasReservadas', 0) and
+            self.obtener_token(tokens, 'nomArchivo', 1) and
+            self.obtener_token(tokens, 'separador', 2) and
+            self.obtener_token(tokens, 'nomVariables', 3)):
+            return True
+        return False
+
+    def obtener_token(self, tokens, esperado, indice):
+        """Verifica si el token en la posición indicada coincide con el esperado."""
+        if indice < len(tokens):
+            return tokens[indice][1] == esperado
+        return False
