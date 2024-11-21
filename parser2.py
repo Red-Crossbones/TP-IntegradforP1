@@ -138,27 +138,23 @@ class InterpreteBari24:
         try:
             if comando == "CARGA":
                 self.cargar(args[0], args[1] if len(args) > 1 else None, args[2] if len(args) > 2 else ',')
-                print(f"Tabla '{args[1]}' cargada con éxito. Estado actual:")
-                self.imprimir_tabla(args[1])
+                print(f"Tabla '{args[1]}' cargada con éxito.")
             elif comando == "GUARDA":
                 self.guarda(args[0], args[1] if len(args) > 1 else None, args[2] if len(args) > 2 else ',')
                 print(f"Tabla '{args[1]}' guardada en '{args[0]}'.")
             elif comando == "SEPARA":
                 columna = int(args[2]) if args[2].isdigit() else args[2]
                 self.separa(args[0], args[1], columna)
-                print(f"Columna '{args[2]}' separada en nueva columna '{args[1]}'. Estado actual de la tabla '{args[0]}':")
-                self.imprimir_tabla(args[0])
+                print(f"Columna '{args[2]}' separada en nueva columna '{args[1]}'.")
             elif comando == "AGREGA":
                 self.agrega(args[0], args[1])
-                print(f"Columna '{args[1]}' agregada a la tabla '{args[0]}'. Estado actual:")
-                self.imprimir_tabla(args[0])
+                print(f"Columna '{args[1]}' agregada a la tabla '{args[0]}'.")
             elif comando == "ENCABEZADO":
                 headers = self.encabezado(args[0])
                 print(f"Encabezados de la tabla '{args[0]}': {headers}")
             elif comando == "TODO":
                 self.todo(args[0], int(args[1]))
-                print(f"Operación TODO aplicada a la tabla '{args[0]}'. Estado actual:")
-                self.imprimir_tabla(args[0])
+                print(f"Operación TODO aplicada a la tabla '{args[0]}'.")
             else:
                 raise ValueError(f"Comando desconocido: {comando}")
         except Exception as e:
