@@ -7,13 +7,16 @@ class InterpreteBari24:
     def __init__(self):
         self.tablas = {}  # Diccionario para almacenar las tablas cargadas
 
-    def cargar(self, nom_arch, nom_variable, separador=','):
+    def cargar(self, nom_arch, nom_variable=None, separador=','):
         """Carga una tabla desde un archivo CSV."""
         if not os.path.exists(nom_arch):
             raise FileNotFoundError(f"El archivo {nom_arch} no existe.")
         
         if separador == '':  # Si el separador está vacío, usar coma por defecto
             separador = ','
+
+        if nom_variable is None:
+            nom_variable = os.path.splitext(os.path.basename(nom_arch))[0]
 
         with open(nom_arch, mode='r', encoding='utf-8') as file:
             reader = csv.reader(file, delimiter=separador)
@@ -23,10 +26,20 @@ class InterpreteBari24:
         headers = rows[0]
         data = rows[1:]
 
+        # Validar encabezados únicos
+        if len(headers) != len(set(headers)):
+            raise ValueError("El archivo contiene encabezados duplicados. Corrija el archivo e intente de nuevo.")
+
         # Completar filas incompletas
         max_cols = len(headers)
+        num_completadas = 0
         for row in data:
-            row.extend([''] * (max_cols - len(row)))
+            if len(row) < max_cols:
+                row.extend([''] * (max_cols - len(row)))
+                num_completadas += 1
+
+        if num_completadas > 0:
+            print(f"Advertencia: Se completaron {num_completadas} filas incompletas con valores vacíos.")
 
         # Guardar la tabla en el diccionario
         self.tablas[nom_variable] = {'headers': headers, 'rows': data}
@@ -57,18 +70,21 @@ class InterpreteBari24:
         headers = table['headers']
         rows = table['rows']
 
-        # Asegurarse de que la columna existe
-        if columna not in headers:
-            raise ValueError(f"La columna {columna} no existe en la tabla {tabla}.")
-        
-        # Separar la columna
-        idx = headers.index(columna)
-        nueva_columna_idx = len(headers)
-        headers.append(nueva_columna)
+        # Identificar la columna
+        if isinstance(columna, int):  # Si es índice
+            if columna < 0 or columna >= len(headers):
+                raise IndexError(f"El índice de columna {columna} está fuera de rango.")
+            idx = columna
+        else:  # Si es nombre
+            if columna not in headers:
+                raise ValueError(f"La columna '{columna}' no existe en la tabla '{tabla}'.")
+            idx = headers.index(columna)
 
+        # Agregar la nueva columna
+        headers.append(nueva_columna)
         for row in rows:
             valor = row[idx]
-            row.append(valor)  # Se agrega el valor de la columna original a la nueva columna
+            row.append(valor)
 
     def agrega(self, tabla, nueva_columna):
         """Agrega una nueva columna a la tabla."""
@@ -97,27 +113,26 @@ class InterpreteBari24:
         return headers
 
     def todo(self, tabla, valor):
-        """Realiza alguna operación en toda la tabla (ejemplo de operación)."""
+        """Aplica una operación en toda la tabla (multiplicación numérica)."""
         if tabla not in self.tablas:
             raise ValueError(f"La tabla {tabla} no existe.")
         
         table = self.tablas[tabla]
         rows = table['rows']
 
-        # Realizar una operación en todas las filas (aquí un ejemplo de multiplicar por un valor)
         for row in rows:
             for idx, cell in enumerate(row):
-                if cell.isdigit():
-                    row[idx] = str(int(cell) * valor)
+                try:
+                    row[idx] = str(float(cell) * valor)
+                except ValueError:
+                    continue  # Ignorar celdas no numéricas
 
     def procesar_instruccion(self, instruccion):
-
         """Procesa una instrucción del lenguaje Bari24."""
         partes = instruccion.strip().split()
         comando = partes[0]
         args = ' '.join(partes[1:]).split(',')
 
-        # Asegurarse de que no haya parámetros vacíos innecesarios
         args = [arg.strip() for arg in args if arg.strip() != '']
 
         try:
@@ -129,7 +144,7 @@ class InterpreteBari24:
                 self.guarda(args[0], args[1] if len(args) > 1 else None, args[2] if len(args) > 2 else ',')
                 print(f"Tabla '{args[1]}' guardada en '{args[0]}'.")
             elif comando == "SEPARA":
-                columna = int(args[2]) if args[2].strip().isdigit() else args[2].strip()
+                columna = int(args[2]) if args[2].isdigit() else args[2]
                 self.separa(args[0], args[1], columna)
                 print(f"Columna '{args[2]}' separada en nueva columna '{args[1]}'. Estado actual de la tabla '{args[0]}':")
                 self.imprimir_tabla(args[0])
@@ -159,29 +174,29 @@ class InterpreteBari24:
         headers = table['headers']
         rows = table['rows']
 
-        # Imprimir encabezados
         print(', '.join(headers))
         print('-' * 50)
-
-        # Imprimir filas
         for row in rows:
             print(', '.join(row))
         print('-' * 50)
 
     def ejecutar_archivo(self, archivo):
-
         """Ejecuta las instrucciones de un archivo Bari24."""
         if not os.path.exists(archivo):
             raise FileNotFoundError(f"El archivo {archivo} no existe.")
-        
+
+        print(f"Iniciando procesamiento del archivo '{archivo}'...")
+
         with open(archivo, 'r', encoding='utf-8') as file:
             instrucciones = file.readlines()
-        
+
         for instruccion in instrucciones:
             instruccion = instruccion.strip()
-            if not instruccion or instruccion.startswith('@'):  # Ignorar líneas vacías o que empiezan con '@'
+            if not instruccion or instruccion.startswith('@'):
                 continue
             try:
                 self.procesar_instruccion(instruccion)
             except ValueError as e:
                 print(f"Error al procesar la instrucción: {e}")
+
+        print(f"Procesamiento del archivo '{archivo}' completado.")
