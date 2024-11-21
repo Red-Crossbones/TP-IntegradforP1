@@ -1,0 +1,4 @@
+CARGA datos.csv, tabla1
+ENCABEZADO tabla1
+TODO tabla1, 5
+GUARDA datoscominados.csv, tabla1
