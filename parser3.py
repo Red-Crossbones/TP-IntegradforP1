@@ -293,10 +293,10 @@ class ParserErrorException(Exception):
 
 
 # Llamada principal para ejecutar el parser
-if __name__ == "__main__":
+def ejecutar(archivo):
     try:
         # Intentamos abrir el archivo y analizar los tokens
-        tokens, erroresLexi, contenido = abrir_archivo("prueba_v2.txt")
+        tokens, erroresLexi, contenido = abrir_archivo(archivo)
         
         if not tokens:
             raise ValueError("Los tokens no son válidos o están vacíos.")

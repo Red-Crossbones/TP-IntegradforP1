@@ -2,7 +2,7 @@
 CARGA datos.csv , alumnos , ;
 CARGA otrosdatos.csv , detalles, ,
 @ Creo una tabla base nueva, 'nuevatabla', donde formateare una mezcla de cosas entre archivos .csv
-SEPARA alumnos , nuevatablaaaaaa , nombre 
+SEPARA alumnos , nuevatabl , nombre 
 SEPARA detalles , dni , dni
 SEPARA detalles , nivel , nivel
 SEPARA detalles , uni , uni
