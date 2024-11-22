@@ -16,7 +16,7 @@ def verificar_sintaxis(tokens):
                 tipo = linea_tokens[0][0]  # La palabra reservada debe estar al inicio
                 
                 mensaje_error = None
-                if tipo == 'GUARDA':  # Unificamos CARGA y GUARDA
+                if tipo == 'GUARDA':
                     if validar_guarda(linea_tokens):
                         for index, item in enumerate(linea_tokens[1:], start=1):
                             if item[0] != "," or (index == len(linea_tokens[1:]) and item[1] == "separador"):
